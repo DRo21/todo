@@ -29,14 +29,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         0,
         CLASS_NAME,
         L"Reminders",
-        WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, CW_USEDEFAULT, 450, 600,
+        WS_CAPTION | WS_SYSMENU,
+        CW_USEDEFAULT, CW_USEDEFAULT, 350, 500,
         nullptr, nullptr, hInstance, nullptr
     );
 
     if (!hwnd) return 0;
 
-    ShowWindow(hwnd, nCmdShow);
+    ShowWindow(hwnd, SW_SHOWNORMAL);
+    SetWindowPos(hwnd, nullptr, 100, 100, 350, 500, SWP_NOZORDER | SWP_NOACTIVATE);
     UpdateWindow(hwnd);
 
     MSG msg = {};
@@ -54,27 +55,26 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
     switch (uMsg) {
     case WM_CREATE: {
-        // Create font for iOS-like appearance
         hFont = CreateFontW(18, 0, 0, 0, FW_REGULAR, FALSE, FALSE, FALSE,
             DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
             VARIABLE_PITCH, L"Segoe UI");
 
-        // Input box
+        // Input box positioned higher to fit inside the smaller window
         hEdit = CreateWindowEx(0, L"EDIT", L"",
             WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL,
-            20, 20, 300, 30,
+            20, 20, 250, 30,  // Adjusted width and positioning
             hwnd, (HMENU)ID_EDIT_INPUT, nullptr, nullptr);
 
-        // Add button
+        // Add button positioned next to input box
         hButton = CreateWindow(L"BUTTON", L"+",
             WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON,
-            330, 20, 50, 30,
+            280, 20, 50, 30,  // Adjusted position and size
             hwnd, (HMENU)ID_BUTTON_ADD, nullptr, nullptr);
 
-        // ListView with checkboxes
+        // ListView positioned below the input box and button
         hListView = CreateWindowEx(WS_EX_CLIENTEDGE, WC_LISTVIEW, L"",
             WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SINGLESEL,
-            20, 70, 360, 450,
+            20, 70, 350, 380,  // Adjusted size for list view to fit in window
             hwnd, (HMENU)ID_LISTVIEW, nullptr, nullptr);
 
         // Apply fonts
